@@ -5,32 +5,24 @@ import React,{useRef,useEffect,useState} from 'react';
 
 
 function App() {
-
+const ratingsContainer = useRef(null);
+const sendBtn = useRef(null);
+const panel = useRef(null);
+const [val,setval] = useState("Satisfied")
 
     useEffect(()=>{
 const ratings = document.querySelectorAll('.rating')
-const ratingsContainer = document.querySelector('.ratings-container')
-const sendBtn = document.querySelector('#send')
-const panel = document.querySelector('#panel')
-let selectedRating = 'Satisfied'
 
-ratingsContainer.addEventListener('click', (e) => {
+
+ratingsContainer.current.addEventListener('click', (e) => {
     if (e.target.parentNode.classList.contains('rating')) {
         removeActive()
         e.target.parentNode.classList.add('active')
-        selectedRating = e.target.nextElementSibling.innerHTML
+        setval(e?.target?.nextElementSibling?.innerHTML)
     }
 })
 
-sendBtn.addEventListener('click', (e) => {
-    panel.innerHTML = `
-    <i class="fas fa-heart"></i>
-    <strong>Thank You!</strong>
-    <br>
-    <strong>Feedback: ${selectedRating}</strong>
-    <p>We'll use your feedback to improve our customer support</p>
-    `
-})
+   
 
 function removeActive() {
     for (let i = 0; i < ratings.length; i++) {
@@ -38,14 +30,26 @@ function removeActive() {
     }
 }
 
-    },[])
+    },[val])
   
+    const handleChange = () =>{
+        panel.current.innerHTML = `
+        <i class="fas fa-heart"></i>
+        <strong>Thank You!</strong>
+        <br>
+        <strong>Feedback: ${val}</strong>
+        <p>We'll use your feedback to improve our customer support</p>
+        `
+    }
+    
+
+
   return (
     
-    <div id="panel" className="panel-container">
+    <div id="panel" className="panel-container" ref={panel}>
     <strong>How satisfied are you with our <br />
         customer support performance?</strong>
-    <div className="ratings-container">
+    <div className="ratings-container" ref={ratingsContainer}>
     <div className="rating">
             <img src="https://cdn-icons.flaticon.com/png/512/1791/premium/1791429.png?token=exp=1650359716~hmac=754b9095022958af781f36e16794e60d" alt="" />
             <small>Unhappy</small>
@@ -61,9 +65,10 @@ function removeActive() {
             <small>Satisfied</small>
         </div>
     </div>
-    <button className="btn" id="send">Send Review</button>
+    <button className="btn" id="send" ref={sendBtn} onClick={handleChange}>Send Review</button>
 </div>
   )
 }
 
 export default App;
+
